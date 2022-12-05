@@ -117,7 +117,6 @@ function collisionDetection() {
         if (score === brickRowCount * brickColumnCount) {
           alert("YOU WIN, CONGRATULATIONS!!");
           document.location.reload();
-          clearInterval(interval);
         }
       }
     }
@@ -149,29 +148,36 @@ function draw() {
   if (y + dy < ballRadius) {
     dy = -dy;
   } else if (y + dy > canvas.height - ballRadius) {
-    if ((x > paddleX && x < paddleX + paddleWidth) || life != 0) {
+    if (x > paddleX && x < paddleX + paddleWidth) {
       dy = -dy;
     } else {
-      life--;
-
-      alert("Game Over");
-      document.location.reload();
-      clearInterval(interval);
+      lives--;
+      if (!lives) {
+        alert("GAME OVER");
+        document.location.reload();
+      } else {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        dx = 3;
+        dy = -3;
+        paddleX = (canvas.width - paddleWidth) / 2;
+      }
     }
-  }
 
-  if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
-    dx = -dx;
-  }
+    if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
+      dx = -dx;
+    }
 
-  x += dx;
-  y += dy;
-  drawScore();
-  drawLives();
-  if (rightPressed) {
-    paddleX = Math.min(paddleX + 7, canvas.width - paddleWidth);
-  } else if (leftPressed) {
-    paddleX = Math.max(paddleX - 7, 0);
+    x += dx;
+    y += dy;
+    drawScore();
+    drawLives();
+    if (rightPressed) {
+      paddleX = Math.min(paddleX + 7, canvas.width - paddleWidth);
+    } else if (leftPressed) {
+      paddleX = Math.max(paddleX - 7, 0);
+    }
+    requestAnimationFrame(draw);
   }
 }
 
@@ -180,4 +186,4 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
-const interval = setInterval(draw, 10);
+draw();
